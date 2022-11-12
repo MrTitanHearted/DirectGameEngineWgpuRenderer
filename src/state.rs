@@ -90,7 +90,7 @@ pub fn resize_viewport(width: u32, height: u32) {
     }
 }
 
-pub fn begin_frame(clear_color: wgpu::Color) -> DrawState {
+pub fn begin_frame(clear_color: wgpu::Color) -> FrameState {
     let current = surface().get_current_texture().unwrap();
 
     let frame = current.texture.create_view(&wgpu::TextureViewDescriptor {
@@ -115,10 +115,10 @@ pub fn begin_frame(clear_color: wgpu::Color) -> DrawState {
         depth_stencil_attachment: None,
     });
 
-    DrawState::new(encoder, current, frame)
+    FrameState::new(encoder, current, frame)
 }
 
-pub fn end_frame(draw_state: DrawState) {
+pub fn end_frame(draw_state: FrameState) {
     let submission = draw_state.encoder.finish();
     queue().submit(std::iter::once(submission));
     draw_state.current_texture.present();

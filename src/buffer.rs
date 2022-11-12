@@ -234,7 +234,7 @@ impl RenderBuffer {
         self.to_owned()
     }
 
-    pub fn render(&self, draw_state: &mut DrawState) {
+    pub fn render(&self, draw_state: &mut FrameState) {
         let encoder = &mut draw_state.encoder;
         let frame = &draw_state.frame;
         let mut render_pass = encoder.begin_render_pass(&wgpu::RenderPassDescriptor {

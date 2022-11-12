@@ -171,13 +171,13 @@ pub trait VertexBufferLayout {
 }
 
 #[derive(Debug)]
-pub struct DrawState {
+pub struct FrameState {
     pub(crate) encoder: wgpu::CommandEncoder,
     pub(crate) current_texture: wgpu::SurfaceTexture,
     pub(crate) frame: wgpu::TextureView,
 }
 
-impl DrawState {
+impl FrameState {
     pub(crate) fn new(
         encoder: wgpu::CommandEncoder,
         current_texture: wgpu::SurfaceTexture,
