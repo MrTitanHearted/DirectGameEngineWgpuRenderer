@@ -1,3 +1,5 @@
+pub use bytemuck;
+pub use raw_window_handle;
 pub mod buffer;
 pub mod common;
 pub mod shader;
@@ -12,4 +14,6 @@ pub mod prelude {
     pub use super::state::*;
     pub use super::texture::*;
     pub use super::uniform::*;
+    pub use super::bytemuck;
+    pub use super::raw_window_handle;
 }
