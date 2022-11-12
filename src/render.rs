@@ -90,7 +90,7 @@ pub fn resize_viewport(width: u32, height: u32) {
     }
 }
 
-pub fn begin_frame(clear_color: wgpu::Color) -> FrameState {
+pub fn begin_frame(clear_color: Option<wgpu::Color>) -> FrameState {
     let current = surface().get_current_texture().unwrap();
 
     let frame = current.texture.create_view(&wgpu::TextureViewDescriptor {
@@ -108,7 +108,11 @@ pub fn begin_frame(clear_color: wgpu::Color) -> FrameState {
             view: &frame,
             resolve_target: None,
             ops: wgpu::Operations {
-                load: wgpu::LoadOp::Clear(clear_color),
+                load: if let Some(clear_color) = clear_color {
+                    wgpu::LoadOp::Clear(clear_color)
+                } else {
+                    wgpu::LoadOp::Load
+                },
                 store: true,
             },
         })],
