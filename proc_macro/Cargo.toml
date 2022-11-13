@@ -1,0 +1,15 @@
+[package]
+name = "proc_macro"
+version = "0.0.1"
+edition = "2021"
+
+[lib]
+proc-macro = true
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+syn = {version = "1.0.103", features = ["full", "extra-traits", "parsing"]}
+quote = "1.0.21"
+wgpu = "0.14.0"
+proc-macro2 = "1.0.47"
