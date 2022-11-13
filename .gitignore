@@ -1,2 +1,4 @@
 /target
 /Cargo.lock
+/proc_macros/Cargo.lock
+/proc_macros/target
