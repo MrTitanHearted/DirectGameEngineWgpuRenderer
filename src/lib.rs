@@ -19,5 +19,5 @@ pub mod prelude {
     pub use super::texture::*;
     pub use super::uniform::*;
     pub use super::wgpu;
-    pub use proc_macro;
+    pub use proc_macro::*;
 }
