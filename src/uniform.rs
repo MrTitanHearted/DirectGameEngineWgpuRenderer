@@ -18,18 +18,18 @@ impl<T: bytemuck::Pod + bytemuck::Zeroable + Clone + Copy> Uniform<T> {
             device.create_buffer_init(&wgpu::util::BufferInitDescriptor {
                 label: None,
                 contents: bytemuck::cast_slice(&[data]),
-                usage: wgpu::BufferUsages::UNIFORM | wgpu::BufferUsages::COPY_DST,
+                usage: wgpu::BufferUsages::UNIFORM | wgpu::BufferUsages::COPY_DST | wgpu::BufferUsages::COPY_SRC,
             }),
         );
 
         Self { buffer, data }
     }
 
-    pub fn data(&self) -> T {
+    pub fn get(&self) -> T {
         self.data
     }
 
-    pub fn write(&mut self, data: T) {
+    pub fn set(&mut self, data: T) {
         let queue = queue();
 
         self.data = data;
