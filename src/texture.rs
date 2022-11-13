@@ -1,5 +1,9 @@
 use crate::common::*;
 
+use std::collections::HashMap;
+
+static mut LOADED_TEXTURES: Option<HashMap<String, Texture2D>> = None;
+
 #[derive(Debug, Clone, Copy, Default, Hash)]
 pub struct Texture2D {
     view: usize,
@@ -7,12 +11,30 @@ pub struct Texture2D {
 
 impl Texture2D {
     pub fn new(path: &str) -> Self {
+        if let Some(textures) = unsafe { &mut LOADED_TEXTURES } {
+            if let Some(texture) = textures.get(path) {
+                return *texture;
+            } else {
+                let texture = Self::load_from_file(path);
+                textures.insert(path.to_string(), texture);
+                return texture;
+            }
+        } else {
+            let mut textures = HashMap::new();
+            let texture = Self::load_from_file(path);
+            textures.insert(path.to_string(), texture);
+            unsafe { LOADED_TEXTURES = Some(textures) };
+            return texture;
+        }
+    }
+
+    fn load_from_file(path: &str) -> Self {
         use wgpu::util::DeviceExt;
 
         let device = device();
         let queue = queue();
 
-        let image = image::open(path).unwrap();
+        let image = image::open(path).expect(&format!("System cannot find the specified image: {path}"));
         let image = image.to_rgba8();
         let (width, height) = image.dimensions();
 

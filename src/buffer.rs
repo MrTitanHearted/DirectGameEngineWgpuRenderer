@@ -12,7 +12,7 @@ pub(crate) type TextureBindGroup = usize;
 pub(crate) type TextureBindGroupEntry = usize;
 pub(crate) type TextureBindGroupLayoutEntry = usize;
 
-#[derive(Debug, Clone, Copy, Default, Hash)]
+#[derive(Debug, Clone, Copy, Hash)]
 pub struct RenderBuffer {
     pipeline: RenderPipeline,
 
@@ -35,9 +35,29 @@ pub struct RenderBuffer {
     texture_bind_group_layout_entry: TextureBindGroupLayoutEntry,
 }
 
+impl Default for RenderBuffer {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 impl RenderBuffer {
     pub fn new() -> Self {
-        let mut render_buffer = Self::default();
+        let mut render_buffer = Self {
+            pipeline: 0,
+            shader: crate::shader::Shader::default(),
+            vertex_buffer: 0,
+            index_buffer: 0,
+            num_vertices: 0,
+            num_indices: 0,
+            vertex_buffer_layout: 0,
+            uniform_bind_group: 0,
+            uniform_bind_group_entry: 0,
+            uniform_bind_group_layout_entry: 0,
+            texture_bind_group: 0,
+            texture_bind_group_entry: 0,
+            texture_bind_group_layout_entry: 0,
+        };
 
         render_buffer.uniform_bind_group_entry = uniform_bind_group_entries().len();
         render_buffer.uniform_bind_group_layout_entry = uniform_bind_group_layout_entries().len();
