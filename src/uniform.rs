@@ -18,7 +18,9 @@ impl<T: bytemuck::Pod + bytemuck::Zeroable + Clone + Copy> Uniform<T> {
             device.create_buffer_init(&wgpu::util::BufferInitDescriptor {
                 label: None,
                 contents: bytemuck::cast_slice(&[data]),
-                usage: wgpu::BufferUsages::UNIFORM | wgpu::BufferUsages::COPY_DST | wgpu::BufferUsages::COPY_SRC,
+                usage: wgpu::BufferUsages::UNIFORM
+                    | wgpu::BufferUsages::COPY_DST
+                    | wgpu::BufferUsages::COPY_SRC,
             }),
         );
 
