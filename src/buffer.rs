@@ -1,16 +1,16 @@
 use crate::common::*;
 use wgpu::util::DeviceExt;
 
-pub type RenderPipeline = usize;
-pub type VertexBuffer = usize;
-pub type IndexBuffer = usize;
-pub type VertexBufferLayout = usize;
-pub type UniformBindGroup = usize;
-pub type UniformBindGroupEntry = usize;
-pub type UniformBindGroupLayoutEntry = usize;
-pub type TextureBindGroup = usize;
-pub type TextureBindGroupEntry = usize;
-pub type TextureBindGroupLayoutEntry = usize;
+pub(crate) type RenderPipeline = usize;
+pub(crate) type VertexBuffer = usize;
+pub(crate) type IndexBuffer = usize;
+pub(crate) type VertexBufferLayout = usize;
+pub(crate) type UniformBindGroup = usize;
+pub(crate) type UniformBindGroupEntry = usize;
+pub(crate) type UniformBindGroupLayoutEntry = usize;
+pub(crate) type TextureBindGroup = usize;
+pub(crate) type TextureBindGroupEntry = usize;
+pub(crate) type TextureBindGroupLayoutEntry = usize;
 
 #[derive(Debug, Clone, Copy, Default, Hash)]
 pub struct RenderBuffer {

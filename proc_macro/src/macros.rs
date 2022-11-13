@@ -87,7 +87,7 @@ fn require_repr_c(attrs : &std::vec::Vec<syn::Attribute>) {
     }));
 
     if !valid {
-        panic!("wrld::Desc derive macro require #[repr(C)] or #[repr(transparent)] attribute for safety measure");
+        panic!("VertexBufferLayout derive macro require #[repr(C)] or #[repr(transparent)] attribute for safety measure");
     }
 }
 
@@ -100,7 +100,7 @@ pub fn vertex_buffer_layout_derive(item: proc_macro::TokenStream, step_mode: wgp
     {
         named
     } else {
-        panic!("Only struct are supported by wrld::Desc supported");
+        panic!("Only struct are supported by VertexBufferLayout supported");
     };
 
     require_repr_c(&attrs);
@@ -139,7 +139,7 @@ pub fn vertex_buffer_layout_derive(item: proc_macro::TokenStream, step_mode: wgp
 
     quote::quote! {
         impl VertexBufferLayout for #ident {
-            pub fn desc() -> wgpu::VertexBufferLayout<'static> {
+            fn desc() -> wgpu::VertexBufferLayout<'static> {
                 wgpu::VertexBufferLayout {
                     array_stride: #offset as wgpu::BufferAddress,
                     step_mode: #step_mode,
@@ -148,4 +148,13 @@ pub fn vertex_buffer_layout_derive(item: proc_macro::TokenStream, step_mode: wgp
             }
         }
     }.into()
+}
+
+pub fn bytemuck_derive(item: proc_macro::TokenStream) -> proc_macro::TokenStream {
+    let syn::DeriveInput { ident, .. } = syn::parse_macro_input!(item as syn::DeriveInput);
+
+    quote::quote!(
+        unsafe impl bytemuck::Zeroable for #ident {}
+        unsafe impl bytemuck::Pod for #ident {}
+    ).into()
 }

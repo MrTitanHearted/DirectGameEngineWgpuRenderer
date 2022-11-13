@@ -18,3 +18,8 @@ mod macros;
 pub fn vertex_buffer_layout_derive(item: TokenStream) -> TokenStream { 
     macros::vertex_buffer_layout_derive(item, wgpu::VertexStepMode::Vertex)
 }
+
+#[proc_macro_derive(BytemuckDerive)]
+pub fn bytemuck_derive(item: TokenStream) -> TokenStream {
+    macros::bytemuck_derive(item)
+}
