@@ -4,7 +4,7 @@ use std::collections::HashMap;
 
 static mut LOADED_TEXTURES: Option<HashMap<String, Texture2D>> = None;
 
-#[derive(Debug, Clone, Copy, Default, Hash)]
+#[derive(Debug, Clone, Copy, Default, Hash, PartialEq)]
 pub struct Texture2D {
     view: usize,
 }

@@ -12,7 +12,7 @@ pub(crate) type TextureBindGroup = usize;
 pub(crate) type TextureBindGroupEntry = usize;
 pub(crate) type TextureBindGroupLayoutEntry = usize;
 
-#[derive(Debug, Clone, Copy, Hash)]
+#[derive(Debug, Clone, Copy, Hash, PartialEq)]
 pub struct RenderBuffer {
     pipeline: RenderPipeline,
 

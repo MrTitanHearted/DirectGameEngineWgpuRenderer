@@ -12,7 +12,7 @@ pub(crate) fn shader(id: usize) -> &'static wgpu::ShaderModule {
     unsafe { &SHADERS[id] }
 }
 
-#[derive(Debug, Clone, Copy, Default, Hash)]
+#[derive(Debug, Clone, Copy, Default, Hash, PartialEq)]
 pub struct Shader {
     pub id: usize,
 }
