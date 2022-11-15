@@ -1,6 +1,6 @@
 use crate::common::*;
 
-#[derive(Debug, Clone, Copy, Default, Hash)]
+#[derive(Debug, Clone, Copy, Default, Hash, PartialEq, PartialOrd)]
 pub struct Uniform<T: bytemuck::Pod + bytemuck::Zeroable + Clone + Copy> {
     buffer: usize,
     data: T,
