@@ -1,4 +1,4 @@
-use crate::common::*;
+use crate::{common::*};
 use wgpu::util::DeviceExt;
 
 pub(crate) type RenderPipeline = usize;
@@ -232,7 +232,17 @@ impl RenderBuffer {
                     polygon_mode: wgpu::PolygonMode::Fill,
                     conservative: false,
                 },
-                depth_stencil: None,
+                depth_stencil: Some(wgpu::DepthStencilState {
+                    format: wgpu::TextureFormat::Depth32Float,
+                    depth_write_enabled: true,
+                    depth_compare: wgpu::CompareFunction::Less,
+                    stencil: wgpu::StencilState::default(),
+                    bias: wgpu::DepthBiasState {
+                        constant: 2,
+                        slope_scale: 2.0,
+                        clamp: 0.0,
+                    },
+                }),
                 multisample: wgpu::MultisampleState {
                     count: 1,
                     mask: !0,
@@ -243,7 +253,10 @@ impl RenderBuffer {
                     entry_point: "fs_main",
                     targets: &[Some(wgpu::ColorTargetState {
                         format: surface_config().format,
-                        blend: Some(wgpu::BlendState::REPLACE),
+                        blend: Some(wgpu::BlendState {
+                            color: wgpu::BlendComponent::REPLACE,
+                            alpha: wgpu::BlendComponent::REPLACE,
+                        }),
                         write_mask: wgpu::ColorWrites::ALL,
                     })],
                 }),
@@ -254,34 +267,45 @@ impl RenderBuffer {
         self.to_owned()
     }
 
-    pub fn render(&self, draw_state: &mut FrameState) {
-        let encoder = &mut draw_state.encoder;
-        let frame = &draw_state.frame;
-        let mut render_pass = encoder.begin_render_pass(&wgpu::RenderPassDescriptor {
-            label: None,
-            color_attachments: &[Some(wgpu::RenderPassColorAttachment {
-                view: frame,
-                resolve_target: None,
-                ops: wgpu::Operations {
-                    load: wgpu::LoadOp::Load,
-                    store: true,
-                },
-            })],
-            depth_stencil_attachment: None,
-        });
+    pub fn render(&self, frame_state: &mut FrameState) {
+        {
+            let encoder = &mut frame_state.encoder;
+            let frame = &frame_state.frame;
+            let mut render_pass = encoder.begin_render_pass(&wgpu::RenderPassDescriptor {
+                label: None,
+                color_attachments: &[Some(wgpu::RenderPassColorAttachment {
+                    view: frame,
+                    resolve_target: None,
+                    ops: wgpu::Operations {
+                        load: wgpu::LoadOp::Load,
+                        store: true,
+                    },
+                })],
+                depth_stencil_attachment: Some(wgpu::RenderPassDepthStencilAttachment {
+                    view: depth_stencil_texture_view(),
+                    depth_ops: Some(wgpu::Operations {
+                        load: wgpu::LoadOp::Clear(1.0),
+                        store: true
+                    }),
+                    stencil_ops: None,
+                }),
+            });
+    
+            render_pass.set_pipeline(render_pipeline(self.pipeline));
+    
+            render_pass.set_bind_group(0, sampler_2d_bind_group(), &[]);
+            render_pass.set_bind_group(1, uniform_bind_group(self.texture_bind_group), &[]);
+            render_pass.set_bind_group(2, texture_2d_bind_group(self.texture_bind_group), &[]);
+    
+            render_pass.set_vertex_buffer(0, vertex_buffer(self.vertex_buffer).slice(..));
+            render_pass.set_index_buffer(
+                index_buffer(self.index_buffer).slice(..),
+                wgpu::IndexFormat::Uint32,
+            );
+    
+            render_pass.draw_indexed(0..self.num_indices, 0, 0..1);
+        }
 
-        render_pass.set_pipeline(render_pipeline(self.pipeline));
-
-        render_pass.set_bind_group(0, sampler_2d_bind_group(), &[]);
-        render_pass.set_bind_group(1, uniform_bind_group(self.texture_bind_group), &[]);
-        render_pass.set_bind_group(2, texture_2d_bind_group(self.texture_bind_group), &[]);
-
-        render_pass.set_vertex_buffer(0, vertex_buffer(self.vertex_buffer).slice(..));
-        render_pass.set_index_buffer(
-            index_buffer(self.index_buffer).slice(..),
-            wgpu::IndexFormat::Uint32,
-        );
-
-        render_pass.draw_indexed(0..self.num_indices, 0, 0..1);
+        // depth_pass().render(frame_state);
     }
 }

@@ -1,4 +1,4 @@
-use crate::common::*;
+use crate::{common::*, dstest::{init_depth_pass, mut_depth_pass}};
 
 pub fn init_wgpu<
     T: raw_window_handle::HasRawWindowHandle + raw_window_handle::HasRawDisplayHandle,
@@ -76,6 +76,7 @@ pub fn init_wgpu<
         SAMPLER_2D = Some(sampler_2d);
         SAMPLER_2D_BIND_GROUP = Some(sampler_2d_bind_group);
         SAMPLER_2D_BIND_GROUP_LAYOUT = Some(sampler_2d_bind_group_layout);
+        init_depth_pass();
     }
 }
 
@@ -87,6 +88,7 @@ pub fn resize_viewport(width: u32, height: u32) {
         surface_config.width = width;
         surface_config.height = height;
         surface.configure(device, surface_config);
+        mut_depth_pass().resize();
     }
 }
 
@@ -116,13 +118,22 @@ pub fn begin_frame(clear_color: Option<wgpu::Color>) -> FrameState {
                 store: true,
             },
         })],
-        depth_stencil_attachment: None,
+        depth_stencil_attachment: Some(wgpu::RenderPassDepthStencilAttachment {
+            view: depth_stencil_texture_view(),
+            depth_ops: Some(wgpu::Operations {
+                load: wgpu::LoadOp::Clear(1.0),
+                store: true
+            }),
+            stencil_ops: None,
+        }),
     });
 
     FrameState::new(encoder, current, frame)
 }
 
 pub fn end_frame(draw_state: FrameState) {
+    // depth_pass().render(&mut draw_state);
+
     let submission = draw_state.encoder.finish();
     queue().submit(std::iter::once(submission));
     draw_state.current_texture.present();

@@ -1,3 +1,5 @@
+use crate::dstest::depth_pass;
+
 pub(crate) static mut INSTANCE: Option<wgpu::Instance> = None;
 pub(crate) static mut ADAPTER: Option<wgpu::Adapter> = None;
 pub(crate) static mut SURFACE: Option<wgpu::Surface> = None;
@@ -164,6 +166,10 @@ pub(crate) fn texture_2d_bind_group_layout_entry(
     id: usize,
 ) -> &'static mut Vec<wgpu::BindGroupLayoutEntry> {
     unsafe { &mut TEXTURE_2D_BIND_GROUP_LAYOUT_ENTRIES[id] }
+}
+
+pub(crate) fn depth_stencil_texture_view() -> &'static wgpu::TextureView {
+    depth_pass().view()
 }
 
 pub trait VertexBufferLayout {

@@ -3,6 +3,7 @@ pub use raw_window_handle;
 pub use wgpu;
 pub mod buffer;
 pub mod common;
+pub mod dstest;
 pub mod render;
 pub mod shader;
 pub mod texture;
@@ -13,6 +14,7 @@ pub mod prelude {
     pub use super::buffer::*;
     pub use super::bytemuck;
     pub use super::common::*;
+    // pub use super::dstest::*;
     pub use super::raw_window_handle;
     pub use super::render::*;
     pub use super::shader::*;
