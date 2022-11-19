@@ -75,16 +75,16 @@ impl RenderBuffer {
         render_buffer
     }
 
-    pub fn with_shader(&mut self, shader: crate::shader::Shader) -> Self {
+    pub fn with_shader(mut self, shader: crate::shader::Shader) -> Self {
         self.shader = shader;
 
-        self.to_owned()
+        self
     }
 
     pub fn with_vertices<
         T: bytemuck::Pod + bytemuck::Zeroable + crate::common::VertexBufferLayout,
     >(
-        &mut self,
+        mut self,
         vertices: &[T],
     ) -> Self {
         let buffer = device().create_buffer_init(&wgpu::util::BufferInitDescriptor {
@@ -100,10 +100,10 @@ impl RenderBuffer {
         vertex_buffers().push(buffer);
         vertex_buffer_layouts().push(vec![T::desc()]);
 
-        self.to_owned()
+        self
     }
 
-    pub fn with_indices(&mut self, indices: &[u32]) -> Self {
+    pub fn with_indices(mut self, indices: &[u32]) -> Self {
         self.index_buffer = index_buffers().len();
         self.num_indices = indices.len() as u32;
 
@@ -115,11 +115,11 @@ impl RenderBuffer {
             }),
         );
 
-        self.to_owned()
+        self
     }
 
     pub fn with_uniform<T: bytemuck::Pod + bytemuck::Zeroable + Clone + Copy>(
-        &mut self,
+        self,
         uniform: crate::uniform::Uniform<T>,
     ) -> Self {
         let bind_group_entry = uniform_bind_group_entry(self.uniform_bind_group_entry);
@@ -144,10 +144,10 @@ impl RenderBuffer {
             count: None,
         });
 
-        self.to_owned()
+        self
     }
 
-    pub fn with_texture2d(&mut self, texture: crate::texture::Texture2D) -> Self {
+    pub fn with_texture2d(self, texture: crate::texture::Texture2D) -> Self {
         let bind_group_entry = texture_2d_bind_group_entry(self.texture_bind_group_entry);
         let bind_group_layout_entry =
             texture_2d_bind_group_layout_entry(self.texture_bind_group_layout_entry);
@@ -170,10 +170,10 @@ impl RenderBuffer {
             count: None,
         });
 
-        self.to_owned()
+        self
     }
 
-    pub fn init(&mut self) -> Self {
+    pub fn init(mut self) -> Self {
         let device = device();
 
         self.pipeline = render_pipelines().len();
@@ -253,10 +253,7 @@ impl RenderBuffer {
                     entry_point: "fs_main",
                     targets: &[Some(wgpu::ColorTargetState {
                         format: surface_config().format,
-                        blend: Some(wgpu::BlendState {
-                            color: wgpu::BlendComponent::REPLACE,
-                            alpha: wgpu::BlendComponent::REPLACE,
-                        }),
+                        blend: Some(wgpu::BlendState::PREMULTIPLIED_ALPHA_BLENDING),
                         write_mask: wgpu::ColorWrites::ALL,
                     })],
                 }),
@@ -264,7 +261,7 @@ impl RenderBuffer {
             }),
         );
 
-        self.to_owned()
+        self
     }
 
     pub fn render(&self, frame_state: &mut FrameState) {
@@ -294,7 +291,7 @@ impl RenderBuffer {
             render_pass.set_pipeline(render_pipeline(self.pipeline));
     
             render_pass.set_bind_group(0, sampler_2d_bind_group(), &[]);
-            render_pass.set_bind_group(1, uniform_bind_group(self.texture_bind_group), &[]);
+            render_pass.set_bind_group(1, uniform_bind_group(self.uniform_bind_group), &[]);
             render_pass.set_bind_group(2, texture_2d_bind_group(self.texture_bind_group), &[]);
     
             render_pass.set_vertex_buffer(0, vertex_buffer(self.vertex_buffer).slice(..));
