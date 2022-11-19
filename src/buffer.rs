@@ -305,7 +305,5 @@ impl RenderBuffer {
     
             render_pass.draw_indexed(0..self.num_indices, 0, 0..1);
         }
-
-        // depth_pass().render(frame_state);
     }
 }

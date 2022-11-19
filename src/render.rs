@@ -132,8 +132,6 @@ pub fn begin_frame(clear_color: Option<wgpu::Color>) -> FrameState {
 }
 
 pub fn end_frame(draw_state: FrameState) {
-    // depth_pass().render(&mut draw_state);
-
     let submission = draw_state.encoder.finish();
     queue().submit(std::iter::once(submission));
     draw_state.current_texture.present();
